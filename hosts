@@ -1,0 +1,7 @@
+  servers:
+    hosts: 
+      10.124.5.[72:78]:
+#      192.168.103.22:
+#      192.168.103.23:
+    vars:
+      ansible_user: srvadmin
