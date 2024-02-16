@@ -1,0 +1,19 @@
+- name: reload klnagent  #
+  service:
+    name: "klnagent64"
+    state: reloaded
+
+- name: restart klnagent #
+  service:
+    name: "klnagent64"
+    state: restarted
+
+- name: reload klnagent  #
+  service:
+    name: "kesl"
+    state: reloaded
+
+- name: restart klnagent #
+  service:
+    name: "kesl"
+    state: restarted

@@ -1,0 +1,57 @@
+-  block:
+    - name: "Remove previous agent installations"
+      apt:
+        name: klnagent64
+        state: absent
+
+    - name: "Deleting previous distros from tmp"
+      file:
+        path: "/tmp/klnagent"
+        state: absent
+
+    - name: "Deleting previous configs from agent"
+      file:
+        path: "/opt/kaspersky/klnagent64"
+        state: absent
+      file:
+        path: "/var/opt/kasperksy/klnagent64"
+        state: absent
+
+    - name: "Getting klnagent install package to temporary folder"
+      copy:
+        src: "/tmp/klnagent"
+        dest: "/tmp"
+        mode: 0755
+
+    - name: "Installing klnagent package"
+      apt:
+        deb: /tmp/klnagent/klnagent64_11.0.0-38_amd64.deb
+
+    - name: "Deleting distros"
+      file:
+        path: "/tmp/klnagent"
+        state: absent
+
+- block:
+    - name: "Creating answer file for klnagent"
+      become: yes
+      template:
+        src: klnagent.j2
+        dest: /tmp/klnagent.ini
+        mode: 0644
+
+    - name: "Run configuring klnagent"
+      become: yes
+      shell: "{{ default_klnagent_bin_path }}/setup/postinstall.pl"
+      args:
+        executable: /bin/bash
+      environment:
+        KLAUTOANSWERS: /tmp/klnagent.ini
+      notify: restart klnagent
+
+    - name: "Ensure klnagent service is enabled"
+      become: yes
+      service:
+        name: klnagent64
+        enabled: yes
+        state: started
