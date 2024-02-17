@@ -5,6 +5,9 @@
         src: "/tmp/kesl_red.rpm"
         dest: "/tmp"
         mode: 0755
+    - name: "Installing perl-File-Copy package"
+      yum:
+        name: perl-File-Copy
     - name: "Installing kesl package"
       yum:
         name: /tmp/kesl_red.rpm
