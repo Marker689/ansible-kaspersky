@@ -27,7 +27,7 @@
         mode: 0755
     - name: "Installing kesl package"
       apt:
-        name: /tmp/kesl_deb.deb
+        deb: /tmp/kesl_deb.deb
     - name: "Deleting distros"
       file:
         path: "/tmp/kesl_deb.deb"
@@ -39,7 +39,7 @@
     - name: "Creating answer file for kesl"
       become: true
       template:
-        src: kesl.j2
+        src: kesl.11.4.j2
         dest: /tmp/kesl.ini
         mode: 0644
 
