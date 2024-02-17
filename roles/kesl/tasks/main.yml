@@ -22,8 +22,8 @@
         dest: "/tmp"
         mode: 0755
     - name: "Installing kesl package"
-      apt:
-        deb: /tmp/kesl_deb.deb
+      dnf:
+        name: /tmp/kesl_deb.deb
     - name: "Deleting distros"
       file:
         path: "/tmp/kesl_deb.deb"
@@ -32,14 +32,14 @@
 
 
 - block:
-    - name: "Creating answer file for kesl"
+    - name: "Creating answer file for klnagent"
       become: true
       template:
         src: kesl.j2
         dest: /tmp/kesl.ini
         mode: 0644
 
-    - name: "Run configuring kesl"
+    - name: "Run configuring klnagent"
       become: true
       shell: "/opt/kaspersky/kesl/bin/kesl-setup.pl --autoinstall=/tmp/kesl.ini"
       args:
