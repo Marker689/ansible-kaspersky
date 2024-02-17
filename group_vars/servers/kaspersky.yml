@@ -1,6 +1,0 @@
-KLNAGENT_SERVER: "192.168.103.20"
-KLNAGENT_PORT: "14000"
-KLNAGENT_SSLPORT: "13000"
-KLNAGENT_USESSL: "1"
-KLNAGENT_GW_MODE: "1"
-default_klnagent_bin_path: "/opt/kaspersky/klnagent64/lib/bin"

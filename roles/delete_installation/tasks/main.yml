@@ -1,0 +1,41 @@
+- name: Debian delete pkgs 
+  block:
+    - name: "Remove previous agent installations"
+      apt:
+        name: klnagent64
+        state: absent
+
+    - name: "Remove previous kesl installations"
+      apt:
+        name: kesl
+        state: absent
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: RHEL delete pkgs 
+  block:
+    - name: "Remove previous agent installations"
+      dnf:
+        name: klnagent64
+        state: absent
+
+    - name: "Remove previous kesl installations"
+      dnf:
+        name: kesl
+        state: absent
+  when: ansible_facts['os_family'] == 'RED' or ansible_facts['os_family'] == 'RedHat'
+
+- name: "Deleting previous configs from agent"
+  file:
+    path: "/opt/kaspersky/klnagent64"
+    state: absent
+- file:
+    path: "/var/opt/kasperksy/klnagent64"
+    state: absent
+
+- name: "Deleting previous configs from kesl"
+  file:
+    path: "/opt/kaspersky/kesl"
+    state: absent
+-  file:
+    path: "/var/opt/kaspersky/kesl"
+    state: absent

@@ -2,11 +2,5 @@
   gather_facts: true
   become:
     true
-  become_method:
-    sudo
-  become_user:
-    root
-  remote_user:
-    srvadmin
   roles:
    - klnagent

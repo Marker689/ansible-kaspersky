@@ -1,57 +1,54 @@
--  block:
-    - name: "Remove previous agent installations"
-      apt:
-        name: klnagent64
-        state: absent
-
-    - name: "Deleting previous distros from tmp"
-      file:
-        path: "/tmp/klnagent"
-        state: absent
-
-    - name: "Deleting previous configs from agent"
-      file:
-        path: "/opt/kaspersky/klnagent64"
-        state: absent
-      file:
-        path: "/var/opt/kasperksy/klnagent64"
-        state: absent
-
-    - name: "Getting klnagent install package to temporary folder"
+- name:  Install KESL to RedHat like OS
+  block:
+    - name: "Getting kesl install package to temporary folder"
       copy:
-        src: "/tmp/klnagent"
+        src: "/tmp/kesl_red.rpm"
         dest: "/tmp"
         mode: 0755
-
-    - name: "Installing klnagent package"
-      apt:
-        deb: /tmp/klnagent/klnagent64_11.0.0-38_amd64.deb
-
+    - name: "Installing kesl package"
+      dnf:
+        name: /tmp/kesl_red.rpm
     - name: "Deleting distros"
       file:
-        path: "/tmp/klnagent"
+        path: "/tmp/klnagent_red.rpm"
         state: absent
+  when: ansible_facts['os_family'] == 'RED' or ansible_facts['os_family'] == 'RedHat'
+
+- name:  Install KESL to Debian like OS
+  block:
+    - name: "Getting kesl install package to temporary folder"
+      copy:
+        src: "/tmp/kesl_deb.deb"
+        dest: "/tmp"
+        mode: 0755
+    - name: "Installing kesl package"
+      dnf:
+        name: /tmp/kesl_deb.deb
+    - name: "Deleting distros"
+      file:
+        path: "/tmp/kesl_deb.deb"
+        state: absent
+  when: ansible_facts['os_family'] == 'Debian'
+
 
 - block:
     - name: "Creating answer file for klnagent"
-      become: yes
+      become: true
       template:
-        src: klnagent.j2
-        dest: /tmp/klnagent.ini
+        src: kesl.j2
+        dest: /tmp/kesl.ini
         mode: 0644
 
     - name: "Run configuring klnagent"
-      become: yes
-      shell: "{{ default_klnagent_bin_path }}/setup/postinstall.pl"
+      become: true
+      shell: "/opt/kaspersky/kesl/bin/kesl-setup.pl --autoinstall=/tmp/kesl.ini"
       args:
         executable: /bin/bash
-      environment:
-        KLAUTOANSWERS: /tmp/klnagent.ini
-      notify: restart klnagent
+      notify: restart kesl
 
-    - name: "Ensure klnagent service is enabled"
-      become: yes
+    - name: "Ensure kesl service is enabled"
+      become: true
       service:
-        name: klnagent64
+        name: kesl
         enabled: yes
         state: started

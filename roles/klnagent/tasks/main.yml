@@ -13,7 +13,7 @@
       file:
         path: "/opt/kaspersky/klnagent64"
         state: absent
-      file:
+    - file:
         path: "/var/opt/kasperksy/klnagent64"
         state: absent
 
@@ -34,15 +34,15 @@
 
 - block:
     - name: "Creating answer file for klnagent"
-      become: yes
+      become: true
       template:
         src: klnagent.j2
         dest: /tmp/klnagent.ini
         mode: 0644
 
     - name: "Run configuring klnagent"
-      become: yes
-      shell: "{{ default_klnagent_bin_path }}/setup/postinstall.pl"
+      become: true
+      shell: "/opt/kaspersky/klnagent64/lib/bin/setup/postinstall.pl"
       args:
         executable: /bin/bash
       environment:
@@ -50,7 +50,7 @@
       notify: restart klnagent
 
     - name: "Ensure klnagent service is enabled"
-      become: yes
+      become: true
       service:
         name: klnagent64
         enabled: yes
