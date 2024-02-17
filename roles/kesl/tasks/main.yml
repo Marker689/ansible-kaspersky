@@ -46,8 +46,6 @@
     - name: "Run configuring kesl"
       become: true
       shell: "/opt/kaspersky/kesl/bin/kesl-setup.pl --autoinstall=/tmp/kesl.ini"
-      args:
-        executable: /bin/bash
       notify: restart kesl
 
     - name: "Ensure kesl service is enabled"
@@ -56,3 +54,11 @@
         name: kesl
         enabled: yes
         state: started
+
+    - name: "Kesl check status"
+      shell: "/opt/kaspersky/kesl/bin/kesl-control -S --app-info"
+      register: Kesl_status
+
+    - name: print KESL Status
+      ansible.builtin.debug:
+        var: Kesl_status
