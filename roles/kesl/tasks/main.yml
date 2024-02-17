@@ -6,7 +6,7 @@
         dest: "/tmp"
         mode: 0755
     - name: "Installing kesl package"
-      dnf:
+      yum:
         name: /tmp/kesl_red.rpm
     - name: "Deleting distros"
       file:
