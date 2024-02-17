@@ -8,6 +8,7 @@
     - name: "Installing kesl package"
       yum:
         name: /tmp/kesl_red.rpm
+        disable_gpg_check: true
     - name: "Deleting distros"
       file:
         path: "/tmp/klnagent_red.rpm"
@@ -22,7 +23,7 @@
         dest: "/tmp"
         mode: 0755
     - name: "Installing kesl package"
-      dnf:
+      apt:
         name: /tmp/kesl_deb.deb
     - name: "Deleting distros"
       file:
@@ -32,14 +33,14 @@
 
 
 - block:
-    - name: "Creating answer file for klnagent"
+    - name: "Creating answer file for kesl"
       become: true
       template:
         src: kesl.j2
         dest: /tmp/kesl.ini
         mode: 0644
 
-    - name: "Run configuring klnagent"
+    - name: "Run configuring kesl"
       become: true
       shell: "/opt/kaspersky/kesl/bin/kesl-setup.pl --autoinstall=/tmp/kesl.ini"
       args:
