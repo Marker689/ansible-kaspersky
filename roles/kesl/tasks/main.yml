@@ -54,11 +54,3 @@
         name: kesl
         enabled: yes
         state: started
-
-    - name: "Kesl check status"
-      shell: "/opt/kaspersky/kesl/bin/kesl-control -S --app-info"
-      register: Kesl_status
-
-    - name: print KESL Status
-      ansible.builtin.debug:
-        var: Kesl_status
