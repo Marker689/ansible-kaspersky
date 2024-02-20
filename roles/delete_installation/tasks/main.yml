@@ -1,6 +1,6 @@
 - name: Debian delete pkgs 
   block:
-    - name: "Remove previous agent installations"
+    - name: "Remove previous klnagent installations"
       apt:
         name: klnagent64
         state: absent
@@ -14,12 +14,12 @@
 - name: RHEL delete pkgs 
   block:
     - name: "Remove previous agent installations"
-      dnf:
+      yum:
         name: klnagent64
         state: absent
 
     - name: "Remove previous kesl installations"
-      dnf:
+      yum:
         name: kesl
         state: absent
   when: ansible_facts['os_family'] == 'RED' or ansible_facts['os_family'] == 'RedHat'

@@ -1,3 +1,10 @@
+### Distro vars
+klnagent_distro_local:
+kesl_distro_local:
+klnagent_distro_remote:
+kesl_distro_remote: 
+kesl_version: "11.4"
+
 ### KLNAGENT vars as defined at https://support.kaspersky.com/KSC/14.2/ru-RU/199693.htm
 KLNAGENT_SERVER: "" #* Input KSC to connect
 KLNAGENT_AUTOINSTALL: "1" #*
