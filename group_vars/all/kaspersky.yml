@@ -1,12 +1,18 @@
 ### Distro vars
-klnagent_distro_local:
-kesl_distro_local:
-klnagent_distro_remote:
-kesl_distro_remote: 
+klnagent_distrib_local_folder: "/tmp"
+kesl_distrib_local_folder: "/tmp"
+klnagent_distrib_remote_folder: "/tmp"
+kesl_distrib_remote_folder: "/tmp"
+kesl_rpm_package_name: "kesl_red.rpm"
+kesl_deb_package_name: "kesl_deb.deb"
+klnagent_rpm_package_name: "klnagent64-14.0.0-4646.x86_64.rpm"
+klnagent_deb_package_name: "klnagent64_14.0.0-4646_amd64.deb"
+kesl_answer_file_path: "/tmp/kesl.ini"
+klnagent_answer_file_path: "/tmp/klnagent.ini"
 kesl_version: "11.4"
 
 ### KLNAGENT vars as defined at https://support.kaspersky.com/KSC/14.2/ru-RU/199693.htm
-KLNAGENT_SERVER: "" #* Input KSC to connect
+KLNAGENT_SERVER: "192.168.103.12" #* Input KSC to connect
 KLNAGENT_AUTOINSTALL: "1" #*
 EULA_ACCEPTED: "1" #*
 KLNAGENT_PROXY_USE: "0"

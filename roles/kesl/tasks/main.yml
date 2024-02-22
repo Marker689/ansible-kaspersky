@@ -1,56 +1,46 @@
-- name:  Install KESL to RedHat like OS
-  block:
-    - name: "Getting kesl install package to temporary folder"
-      copy:
-        src: "/tmp/kesl_red.rpm"
-        dest: "/tmp"
-        mode: 0755
-    - name: "Installing perl-File-Copy package"
-      yum:
-        name: perl-File-Copy
-    - name: "Installing kesl package"
-      yum:
-        name: /tmp/kesl_red.rpm
-        disable_gpg_check: true
-    - name: "Deleting distros"
-      file:
-        path: "/tmp/klnagent_red.rpm"
-        state: absent
+- name: Install KESL to RedHat like OS
   when: ansible_facts['os_family'] == 'RED' or ansible_facts['os_family'] == 'RedHat'
-
-- name:  Install KESL to Debian like OS
   block:
     - name: "Getting kesl install package to temporary folder"
-      copy:
-        src: "/tmp/kesl_deb.deb"
-        dest: "/tmp"
-        mode: 0755
-    - name: "Installing kesl package"
-      apt:
-        deb: /tmp/kesl_deb.deb
-    - name: "Deleting distros"
-      file:
-        path: "/tmp/kesl_deb.deb"
-        state: absent
+      ansible.builtin.copy:
+        src: "{{ kesl_distrib_local_folder }}/{{ kesl_rpm_package_name }}"
+        dest: "{{ kesl_distrib_remote_folder }}"
+        mode: "0755"
+
+    - name: Installing perl-File-Copy package
+      ansible.builtin.yum:
+        name: perl-File-Copy
+
+    - name: Installing kesl package
+      ansible.builtin.yum:
+        name: "{{ kesl_distrib_remote_folder }}/{{ kesl_rpm_package_name }}"
+        disable_gpg_check: true
+
+- name: Install KESL to Debian like OS
   when: ansible_facts['os_family'] == 'Debian'
+  block:
+    - name: Getting kesl install package to temporary folder
+      ansible.builtin.copy:
+        src: "{{ kesl_distrib_local_folder }}/{{ kesl_deb_package_name }}"
+        dest: "{{ kesl_distrib_remote_folder }}"
+        mode: "0755"
+    - name: "Installing kesl package"
+      ansible.builtin.apt:
+        deb: "{{ kesl_distrib_remote_folder }}/{{ kesl_deb_package_name }}"
 
+- name: Creating answer file for kesl
+  ansible.builtin.template:
+    src: kesl.j2
+    dest: "{{ kesl_answer_file_path }}"
+    mode: "0644"
 
-- block:
-    - name: "Creating answer file for kesl"
-      become: true
-      template:
-        src: kesl.11.4.j2
-        dest: /tmp/kesl.ini
-        mode: 0644
+- name: Run configuring kesl
+  ansible.builtin.command: "/opt/kaspersky/kesl/bin/kesl-setup.pl --autoinstall={{ kesl_answer_file_path }}"
+  changed_when: false
+  notify: Restart kesl
 
-    - name: "Run configuring kesl"
-      become: true
-      shell: "/opt/kaspersky/kesl/bin/kesl-setup.pl --autoinstall=/tmp/kesl.ini"
-      notify: restart kesl
-
-    - name: "Ensure kesl service is enabled"
-      become: true
-      service:
-        name: kesl
-        enabled: yes
-        state: started
+- name: Ensure kesl service is enabled and restarted
+  ansible.builtin.service:
+    name: kesl
+    enabled: true
+    state: restarted

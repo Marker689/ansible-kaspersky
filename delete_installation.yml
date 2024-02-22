@@ -1,6 +1,7 @@
-- hosts: all
+- name: Delete installation playbook
+  hosts: all
   gather_facts: true
   become:
     true
   roles:
-   - delete_installation
+    - delete_installation

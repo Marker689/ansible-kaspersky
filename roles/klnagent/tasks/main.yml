@@ -1,57 +1,48 @@
--  block:
-    - name: "Remove previous agent installations"
-      apt:
-        name: klnagent64
-        state: absent
+---
+- name: Installing RPM to RedHat Like
+  when: ansible_facts['os_family'] == 'RED' or ansible_facts['os_family'] == 'RedHat'
+  block:
+    - name: Getting klnagent install package to temporary folder
+      ansible.builtin.copy:
+        src: "{{ klnagent_distrib_local_folder }}/{{ klnagent_rpm_package_name }}"
+        dest: "{{ klnagent_distrib_remote_folder }}"
+        mode: "0755"
+    - name: Installing klnagent package
+      ansible.builtin.yum:
+        name: "{{ klnagent_distrib_remote_folder }}/{{ klnagent_rpm_package_name }}"
+        disable_gpg_check: true
 
-    - name: "Deleting previous distros from tmp"
-      file:
-        path: "/tmp/klnagent"
-        state: absent
 
-    - name: "Deleting previous configs from agent"
-      file:
-        path: "/opt/kaspersky/klnagent64"
-        state: absent
-    - file:
-        path: "/var/opt/kasperksy/klnagent64"
-        state: absent
+- name: Installing DEB to Debian Like
+  when: ansible_facts['os_family'] == 'Debian'
+  block:
+    - name: Getting klnagent install package to temporary folder
+      ansible.builtin.copy:
+        src: "{{ klnagent_distrib_local_folder }}/{{ klnagent_deb_package_name }}"
+        dest: "{{ klnagent_distrib_remote_folder }}"
+        mode: "0755"
+    - name: Installing klnagent package
+      ansible.builtin.apt:
+        deb: "{{ klnagent_distrib_remote_folder }}/{{ klnagent_deb_package_name }}"
 
-    - name: "Getting klnagent install package to temporary folder"
-      copy:
-        src: "/tmp/klnagent"
-        dest: "/tmp"
-        mode: 0755
+- name: Creating answer file for klnagent
+  become: true
+  ansible.builtin.template:
+    src: klnagent.j2
+    dest: "{{ klnagent_answer_file_path }}"
+    mode: "0644"
 
-    - name: "Installing klnagent package"
-      apt:
-        deb: /tmp/klnagent/klnagent64_11.0.0-38_amd64.deb
+- name: Run configuring klnagent
+  become: true
+  ansible.builtin.command: /opt/kaspersky/klnagent64/lib/bin/setup/postinstall.pl
+  environment:
+    KLAUTOANSWERS: "{{ klnagent_answer_file_path }}"
+  notify: restart klnagent
+  changed_when: false
 
-    - name: "Deleting distros"
-      file:
-        path: "/tmp/klnagent"
-        state: absent
-
-- block:
-    - name: "Creating answer file for klnagent"
-      become: true
-      template:
-        src: klnagent.j2
-        dest: /tmp/klnagent.ini
-        mode: 0644
-
-    - name: "Run configuring klnagent"
-      become: true
-      shell: "/opt/kaspersky/klnagent64/lib/bin/setup/postinstall.pl"
-      args:
-        executable: /bin/bash
-      environment:
-        KLAUTOANSWERS: /tmp/klnagent.ini
-      notify: restart klnagent
-
-    - name: "Ensure klnagent service is enabled"
-      become: true
-      service:
-        name: klnagent64
-        enabled: yes
-        state: started
+- name: Ensure klnagent service is enabled and restarted
+  become: true
+  ansible.builtin.service:
+    name: klnagent64
+    enabled: true
+    state: restarted

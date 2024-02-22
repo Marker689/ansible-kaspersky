@@ -1,9 +1,9 @@
-- name: reload kesl  #
-  service:
+- name: Reload kesl
+  ansible.builtin.service:
     name: "kesl"
     state: reloaded
 
-- name: restart kesl #
-  service:
+- name: Restart kesl
+  ansible.builtin.service:
     name: "kesl"
     state: restarted

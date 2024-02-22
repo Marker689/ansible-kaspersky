@@ -1,6 +1,7 @@
-- hosts: all
+- name: Installing only kesl
+  hosts: all
   gather_facts: true
   become:
     true
   roles:
-   - kesl
+    - kesl

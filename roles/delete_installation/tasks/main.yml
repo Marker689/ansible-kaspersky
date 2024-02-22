@@ -1,41 +1,43 @@
-- name: Debian delete pkgs 
+- name: Debian delete pkgs
+  when: ansible_facts['os_family'] == 'Debian'
   block:
     - name: "Remove previous klnagent installations"
-      apt:
+      ansible.builtin.apt:
         name: klnagent64
         state: absent
 
     - name: "Remove previous kesl installations"
-      apt:
+      ansible.builtin.apt:
         name: kesl
         state: absent
-  when: ansible_facts['os_family'] == 'Debian'
 
-- name: RHEL delete pkgs 
+- name: RHEL delete pkgs
+  when: ansible_facts['os_family'] == 'RED' or ansible_facts['os_family'] == 'RedHat'
   block:
     - name: "Remove previous agent installations"
-      yum:
+      ansible.builtin.yum:
         name: klnagent64
         state: absent
 
     - name: "Remove previous kesl installations"
-      yum:
+      ansible.builtin.yum:
         name: kesl
         state: absent
-  when: ansible_facts['os_family'] == 'RED' or ansible_facts['os_family'] == 'RedHat'
 
-- name: "Deleting previous configs from agent"
-  file:
+- name: Clear /opt/kaspersky/klnagent64
+  ansible.builtin.file:
     path: "/opt/kaspersky/klnagent64"
     state: absent
-- file:
+- name: Clear /var/opt/kasperksy/klnagent64
+  ansible.builtin.file:
     path: "/var/opt/kasperksy/klnagent64"
     state: absent
 
-- name: "Deleting previous configs from kesl"
-  file:
+- name: "Deleting previous configs from /opt/kaspersky/kesl"
+  ansible.builtin.file:
     path: "/opt/kaspersky/kesl"
     state: absent
--  file:
+- name: "Deleting previous configs from /var/opt/kaspersky/kesl"
+  ansible.builtin.file:
     path: "/var/opt/kaspersky/kesl"
     state: absent
