@@ -17,7 +17,7 @@
         disable_gpg_check: true
 
 - name: Install KESL to Debian like OS
-  when: ansible_facts['os_family'] == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == 'Astra Linux'
   block:
     - name: Getting kesl install package to temporary folder
       ansible.builtin.copy:
