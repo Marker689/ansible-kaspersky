@@ -1,5 +1,25 @@
+- name: Stopped kesl
+  ansible.builtin.service:
+    name: "kesl"
+    state: stopped
+
+- name: Stopped klnagent
+  ansible.builtin.service:
+    name: "klnagent64"
+    state: stopped
+
+- name: Stopped kesl
+  ansible.builtin.service:
+    name: "kesl"
+    enabled: false
+
+- name: Stopped klnagent
+  ansible.builtin.service:
+    name: "klnagent64"
+    enabled: false
+
 - name: Debian delete pkgs
-  when: ansible_facts['os_family'] == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian' or ansible_facts['os_family'] == 'Astra Linux'
   block:
     - name: "Remove previous klnagent installations"
       ansible.builtin.apt:
@@ -24,20 +44,12 @@
         name: kesl
         state: absent
 
-- name: Clear /opt/kaspersky/klnagent64
+- name: Clear /opt/kaspersky
   ansible.builtin.file:
-    path: "/opt/kaspersky/klnagent64"
-    state: absent
-- name: Clear /var/opt/kasperksy/klnagent64
-  ansible.builtin.file:
-    path: "/var/opt/kasperksy/klnagent64"
+    path: "/opt/kaspersky"
     state: absent
 
-- name: "Deleting previous configs from /opt/kaspersky/kesl"
+- name: Clear /var/opt/kasperksy
   ansible.builtin.file:
-    path: "/opt/kaspersky/kesl"
-    state: absent
-- name: "Deleting previous configs from /var/opt/kaspersky/kesl"
-  ansible.builtin.file:
-    path: "/var/opt/kaspersky/kesl"
+    path: "/var/opt/kaspersky"
     state: absent

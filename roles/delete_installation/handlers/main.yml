@@ -1,0 +1,9 @@
+- name: Stopped kesl
+  ansible.builtin.service:
+    name: "kesl"
+    state: stopped
+
+- name: Stopped klnagent
+  ansible.builtin.service:
+    name: "klnagent64"
+    state: stopped
